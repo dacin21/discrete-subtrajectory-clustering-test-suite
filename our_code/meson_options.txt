@@ -1,0 +1,7 @@
+
+option('profiling', type: 'boolean', value: true,
+       description: 'Enable profiling.')
+option('perftools', type: 'boolean', value: false,
+       description: 'Enable the perftools cpu profiler.')
+option('fsanitize', type: 'boolean', value: false,
+       description: 'Enable address and overflow sanitizer.')

@@ -1,0 +1,50 @@
+[requires]
+cgal/5.3
+gsl/2.7
+gmp/6.2.1
+mpfr/4.1.0
+boost/1.77.0
+catch2/2.13.6
+rapidjson/1.1.0 
+geographiclib/1.52
+
+[generators]
+CMakeToolchain
+CMakeDeps
+
+[options]
+# Disable a lot of boost libraries
+#Required by "log": "atomic"
+#Required by "thread": "chrono"
+#Required by "log": "container"
+boost:without_context=True
+boost:without_contract=True
+boost:without_coroutine=True
+#Required by "log": "date_time"
+#Required by "log": "exception"
+boost:without_fiber=True
+#Required by "log": "filesystem"
+# Include "graph"
+boost:without_graph_parallel=True
+#Include "iostreams"
+boost:without_json=True
+#Required by "log": "locale"
+#Include "log"
+#Required by "graph": "math"
+boost:without_mpi=True
+boost:without_nowide=True
+boost:without_program_options=True
+boost:without_python=True
+#Required by "graph": "random"
+#Required by "graph": "regex"
+#Required by "graph": "serialization"
+boost:without_stacktrace=True
+#Include "system"
+boost:without_test=True
+# Include "thread"
+boost:without_timer=True
+boost:without_type_erasure=True
+boost:without_wave=True
+
+[imports]
+bin, *.dll -> ./bin # Copies all dll files from packages to bin folder within install folder

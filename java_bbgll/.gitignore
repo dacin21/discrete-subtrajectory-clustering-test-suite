@@ -1,0 +1,13 @@
+
+.idea/
+data/
+log/
+savst/
+out/
+bench/
+target/
+
+*.rar
+*.iml
+
+# general-config.yml

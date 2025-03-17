@@ -1,0 +1,7 @@
+webPagePort: 9000
+openWebPageOnStart: false
+googleMapsApiKey: abc
+# datasetDirectory: /data/tmp/data_sets/mapconstruction/pfoser/data/tracks/
+datasetDirectory: ./data
+savedStatesDirectory: savst/
+numOfProcesses: 2

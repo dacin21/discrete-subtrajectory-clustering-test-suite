@@ -1,0 +1,45 @@
+name: MoveTK-CI-Ubuntu
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-ubuntu:
+
+    runs-on: ubuntu-22.04
+
+    steps:   
+        - uses: actions/checkout@v2
+          with:
+            submodules: recursive
+        - name: install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install libboost-all-dev cmake libcgal-dev doxygen gcc g++ 
+            sudo apt-get install libgsl-dev libgslcblas0 gsl-bin libgsl27 
+            sudo apt-get install make libmpfr-dev git pybind11-dev python3-dev
+        - name: Build Geographiclib 1.52
+          run: |
+            wget https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.52.zip/download 
+            mv download GeographicLib-1.52.zip 
+            unzip GeographicLib-1.52.zip 
+            cd GeographicLib-1.52 
+            mkdir BUILD && cd BUILD 
+            cmake .. 
+            make && make test && sudo make install
+        - name: build movetk
+          run: |
+            export LIBRARY_PATH=/usr/local/lib/ 
+            echo $LIBRARY_PATH 
+            ./ci.sh
+        - uses: actions/upload-artifact@v2
+          with:
+            name: RPM package
+            path: /home/runner/work/movetk/movetk/Release/movetk-0.0.1-Linux.rpm
+        - uses: actions/upload-artifact@v2
+          with:
+            name: DEB package
+            path: /home/runner/work/movetk/movetk/Release/movetk-0.0.1-Linux.deb

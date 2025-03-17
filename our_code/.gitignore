@@ -1,0 +1,6 @@
+build/
+.vscode
+.cache
+.clangd
+**Session.vim
+compile_flags.txt

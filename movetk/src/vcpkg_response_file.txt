@@ -1,0 +1,10 @@
+boost-graph
+boost-iostreams
+boost-geometry
+boost-log
+gsl
+cgal
+geographiclib
+pybind11
+--triplet
+x64-windows

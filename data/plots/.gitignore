@@ -1,0 +1,13 @@
+**/*.pl
+**/*.pdf
+**/*.log
+**/*.out
+**/*.aux
+**/*.fls
+**/*.bbl
+**/*.blg
+**/*.fdb_latexmk
+**/signature.*
+**/Session.vim
+**/__log_buffer
+

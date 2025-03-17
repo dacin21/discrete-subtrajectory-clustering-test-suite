@@ -1,0 +1,79 @@
+name:  MoveTK-CI-Windows
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-windows:
+    runs-on: windows-2019
+
+    steps:
+      # Checkout repository
+      - name: Checking out MoveTk
+        uses: actions/checkout@v2
+        with:
+            repository: movetk/movetk
+            submodules: recursive
+            path: movetk   
+     
+      # Get the ninja generator
+      - uses: seanmiddleditch/gha-setup-ninja@v3
+      - name: Setup VS dev environment
+        uses: seanmiddleditch/gha-setup-vsdevenv@master
+
+      # Install dependencies
+      - name: Restore Conan packages from cache
+        uses: actions/cache/restore@v3
+        id: conan-restore-cache
+        env:
+          cache-name: cache-conan-packages-with-short
+        with:
+          path: |
+            ~/.conan
+            C:/.conan
+          key: win:msvc-build:${{ env.cache-name }}:${{ hashFiles('movetk/conanfile.txt') }}
+          restore-keys: |
+            win:msvc-build:${{ env.cache-name }}:
+      - name: Install conan
+        run: pip install conan==1.59.0
+      - name: Install dependencies via conan
+        run: conan install ${{github.workspace}}/movetk/conanfile.txt -if ${{github.workspace}}/conan-deps --build=missing 
+      - name: Save Conan packages
+        uses: actions/cache/save@v3
+        env:
+          cache-name: cache-conan-packages-with-short
+        with:
+          path: |
+            ~/.conan
+            C:/.conan
+          key: win:msvc-build:${{ env.cache-name }}:${{ hashFiles('movetk/conanfile.txt') }}
+        if: steps.conan-restore-cache.outputs.cache-hit != 'true'
+      - name: Add dependencies binary folder to PATH
+        env:
+          bin_folder: ${{github.workspace}}/conan-deps/bin
+        run: |
+          echo "$env:bin_folder" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Print PATH
+        run: |
+          echo "$env:PATH"
+      
+      # Build movetk
+      - name: Configure CMake with Ninja
+        id: runcmake
+        run: >
+          cmake -S ${{github.workspace}}/movetk -B ${{github.workspace}}/build -GNinja
+          -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
+          -DCMAKE_PREFIX_PATH=${{github.workspace}}/conan-deps
+          -DMOVETK_WITH_CGAL_BACKEND=OFF
+          -DMOVETK_BUILD_TESTS=ON
+          -DMOVETK_BUILD_EXAMPLES=ON
+          -DCMAKE_BUILD_TYPE=Release
+      - name: Build MoveTk
+        run: cmake --build .
+        working-directory: ${{github.workspace}}/build
+      - name: Run tests
+        run: ctest . 
+        working-directory: ${{github.workspace}}/build
